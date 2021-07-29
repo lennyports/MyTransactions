@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20F71" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Transaction" representedClassName=".Transaction" syncable="YES" codeGenerationType="class">
+        <attribute name="amount" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="isReturn" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="merchant" attributeType="String"/>
+        <attribute name="note" attributeType="String"/>
+    </entity>
+    <elements>
+        <element name="Transaction" positionX="-54" positionY="-9" width="128" height="104"/>
+    </elements>
+</model>
