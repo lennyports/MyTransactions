@@ -54,8 +54,9 @@ class TransactionInputViewController: UIViewController {
         isReturn = (purchaseReturnSegmentedControl.selectedSegmentIndex == 1)
         
         guard isValidInput() else {
-            showAlert(alertDescription: "A valid transaction input must meet the requirements below: \n1. Ensure the merchant and amount fields must not be empty.\n2. The selected date is not in the future.\n3. The amount must be between $0.01 and $99.99")
+            showAlert()
             return
+            
         }
         
         if isNewTransaction {
@@ -95,21 +96,14 @@ class TransactionInputViewController: UIViewController {
         }
         return true
     }
-    
-    private func showAlert(alertDescription: String) {
-        let alertController = UIAlertController(title: "Invalid Input", message: alertDescription, preferredStyle: .alert)
-        let action = UIAlertAction(title: "Okay", style: .default) { alertAction in }
-        alertController.addAction(action)
-        present(alertController, animated: true, completion: nil)
-    }
 }
+
 
 // MARK: - Textfield delegate methods
 
 extension TransactionInputViewController: UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        
         if let digit = Int(string) {
             inputAmount = (inputAmount * 10) + digit
         }

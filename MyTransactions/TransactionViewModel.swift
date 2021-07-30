@@ -50,6 +50,19 @@ class TransactionViewModel: ObservableObject {
         return transactions.value[index].isReturn ? .systemGreen : .label
     }
     
+    func configureSortCriteria(selectedSegmentIndex: Int) {
+        switch selectedSegmentIndex {
+        case 0:
+            sortCriteria = .date
+        case 1:
+            sortCriteria = .merchant
+        case 2:
+            sortCriteria = .amount
+        default:
+            return
+        }
+    }
+    
     var sortCriteria: SortCriteria = .date {
         didSet { loadTransactions() }
     }

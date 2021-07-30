@@ -37,17 +37,9 @@ class TransactionsViewController: UITableViewController {
         transactionVM.loadTransactions()
     }
     @IBAction func sortSegmentSelected(_ sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 0:
-            transactionVM.sortCriteria = .date
-        case 1:
-            transactionVM.sortCriteria = .merchant
-        case 2:
-            transactionVM.sortCriteria = .amount
-        default:
-            return
-        }
+        transactionVM.configureSortCriteria(selectedSegmentIndex: sender.selectedSegmentIndex)
     }
+    
     
     // MARK: - Datasource methods
     
@@ -96,16 +88,11 @@ class TransactionsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             tableView.beginUpdates()
-            
             transactionVM.deleteTransaction(index: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
-            
             tableView.endUpdates()
         }
     }
-    
-    
-    
 }
 
 
