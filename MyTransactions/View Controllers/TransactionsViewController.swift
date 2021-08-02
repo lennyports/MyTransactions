@@ -18,7 +18,6 @@ class TransactionsViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
         setupTransactionListSubscriber()
