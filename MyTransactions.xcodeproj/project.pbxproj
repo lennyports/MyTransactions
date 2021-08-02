@@ -78,7 +78,7 @@
 			children = (
 				FC3BDE8626A9FDA200D945C8 /* Model */,
 				FC3BDE8E26AA0A3200D945C8 /* View */,
-				FC3BDE8B26AA085B00D945C8 /* View Model */,
+				FC77CC8126B846CD00DB161A /* View Model */,
 				FC3BDE9126AA0CE100D945C8 /* View Controllers */,
 				FC3BDE6F26A9FD6400D945C8 /* AppDelegate.swift */,
 				FC3BDE7126A9FD6400D945C8 /* SceneDelegate.swift */,
@@ -100,15 +100,6 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		FC3BDE8B26AA085B00D945C8 /* View Model */ = {
-			isa = PBXGroup;
-			children = (
-				FC77CC7F26B744B400DB161A /* TransactionListViewModel.swift */,
-				FC3BDE8C26AA087800D945C8 /* TransactionViewModel.swift */,
-			);
-			name = "View Model";
-			sourceTree = "<group>";
-		};
 		FC3BDE8E26AA0A3200D945C8 /* View */ = {
 			isa = PBXGroup;
 			children = (
@@ -125,6 +116,15 @@
 				FC3BDE8F26AA0CD600D945C8 /* TransactionInputViewController.swift */,
 			);
 			path = "View Controllers";
+			sourceTree = "<group>";
+		};
+		FC77CC8126B846CD00DB161A /* View Model */ = {
+			isa = PBXGroup;
+			children = (
+				FC77CC7F26B744B400DB161A /* TransactionListViewModel.swift */,
+				FC3BDE8C26AA087800D945C8 /* TransactionViewModel.swift */,
+			);
+			path = "View Model";
 			sourceTree = "<group>";
 		};
 		FCE01DA326AD9DEC000BCF67 /* Extensions */ = {
