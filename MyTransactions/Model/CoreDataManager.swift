@@ -25,9 +25,7 @@ class CoreDataManager {
         persistantContainer.loadPersistentStores { (description, error) in
             if let error = error {
                 print("Error loading CORE DATA, \(error)")
-            } //else {
-                //self.loadTransactions()
-            //}
+            }
         }
     }
     
