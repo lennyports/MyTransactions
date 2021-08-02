@@ -18,8 +18,6 @@ class CoreDataManager {
     
     static let shared = CoreDataManager()
     
-    var transactions = CurrentValueSubject<[Transaction], Never>([Transaction]())
-    
     private init() {
         persistantContainer = NSPersistentContainer(name: "Transaction")
         persistantContainer.loadPersistentStores { (description, error) in

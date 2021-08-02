@@ -41,15 +41,18 @@ class TransactionInputViewController: UIViewController {
         }
     }
     
+    
+    // MARK: - UI actions received
+    
     @IBAction func doneButtonTapped(_ sender: UIBarButtonItem) {
         
         guard isValidInput() else { showAlert(); return }
         
-        transactionListVM?.merchant = merchantTextField.text!//merchant
+        transactionListVM?.merchant = merchantTextField.text!
         transactionListVM?.amount = amount
-        transactionListVM?.date = datePicker.date//date
-        transactionListVM?.note = notesTextField.text!//note
-        transactionListVM?.isReturn = (purchaseReturnSegmentedControl.selectedSegmentIndex == 1)//isReturn
+        transactionListVM?.date = datePicker.date
+        transactionListVM?.note = notesTextField.text!
+        transactionListVM?.isReturn = (purchaseReturnSegmentedControl.selectedSegmentIndex == 1)
         
         if isNewTransaction {
             transactionListVM?.addTransaction()
@@ -57,7 +60,6 @@ class TransactionInputViewController: UIViewController {
             guard let transactionToUpdate = transactionListVM?.transactions.value[selectedIndex!] else { return }
             transactionListVM?.updateTransaction(transactionToUpdate)
         }
-        
         dismiss(animated: true, completion: nil)
     }
     
@@ -74,6 +76,9 @@ class TransactionInputViewController: UIViewController {
         notesTextField?.text = transaction.note
         amount = transaction.amount
     }
+    
+    
+    // MARK: - Helper functions
     
     private func configureUI() {
         merchantStackView.layer.cornerRadius = 6

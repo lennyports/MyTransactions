@@ -8,6 +8,7 @@
 import Foundation
 
 enum SortCriteria: String {
+    
     case merchant = "merchant"
     case amount = "amount"
     case date = "date"

@@ -8,6 +8,7 @@
 import Foundation
 
 extension Double {
+    
     var toUsDollars: String {
         let formatter = NumberFormatter()
         formatter.numberStyle = NumberFormatter.Style.currency
