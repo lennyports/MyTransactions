@@ -10,7 +10,7 @@ import Combine
 
 class TransactionsViewController: UITableViewController {
     
-    var transactionVM = TransactionViewModel()
+    var transactionListVM = TransactionListViewModel()
     var cancellable: AnyCancellable?
     
     @IBOutlet weak var totalLabel: UILabel!
@@ -21,40 +21,47 @@ class TransactionsViewController: UITableViewController {
         // Do any additional setup after loading the view.
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
-        cancellable = transactionVM.transactions.sink { _ in
+        setupTransactionListSubscriber()
+    }
+    
+    private func setupTransactionListSubscriber() {
+        cancellable = transactionListVM.transactions.sink { _ in
             self.tableView.reloadData()
-            self.totalLabel.text = self.transactionVM.transactionsTotalString
+            self.totalLabel.text = self.transactionListVM.transactionsTotalString
         }
     }
     
-    // MARK: - Button actions
+    
+    // MARK: - UI actions received
     
     @IBAction func addButtonTapped(_ sender: UIBarButtonItem) {
         performSegue(withIdentifier: "goToNewTransaction", sender: self)
     }
     
     @IBAction func refreshButtonTapped(_ sender: UIBarButtonItem) {
-        transactionVM.loadTransactions()
+        transactionListVM.getAllTransactions()
     }
+    
     @IBAction func sortSegmentSelected(_ sender: UISegmentedControl) {
-        transactionVM.configureSortCriteria(selectedSegmentIndex: sender.selectedSegmentIndex)
+        transactionListVM.configureSortCriteria(selectedSegmentIndex: sender.selectedSegmentIndex)
     }
     
-    
+}
+
+
+
+extension TransactionsViewController {
     // MARK: - Datasource methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        transactionVM.transactions.value.count
+        transactionListVM.transactions.value.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "transactionCell", for: indexPath) as! TransactionTableViewCell
         
-        cell.merchantLabel.text = transactionVM.transactions.value[indexPath.row].merchant
-        cell.amountLabel.text = transactionVM.amountAsString(index: indexPath.row)
-        cell.amountLabel.textColor = transactionVM.getAmountTextColor(index: indexPath.row)
-        cell.dateLabel.text = transactionVM.dateAsString(index: indexPath.row)
-        cell.noteLabel.text = transactionVM.transactions.value[indexPath.row].note
+        let transaction = transactionListVM.transactions.value[indexPath.row]
+        cell.configureCell(transaction: transaction)
         
         return cell
     }
@@ -72,13 +79,14 @@ class TransactionsViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let navVC = segue.destination as! UINavigationController
         let transactionInputVC = navVC.topViewController as! TransactionInputViewController
+        
         if segue.identifier == "goToTransactionDetail" {
             if let indexPath = tableView.indexPathForSelectedRow {
                 transactionInputVC.isNewTransaction = false
                 transactionInputVC.selectedIndex = indexPath.row
             }
         }
-        transactionInputVC.transactionVM = transactionVM
+        transactionInputVC.transactionListVM = transactionListVM
     }
     
     override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
@@ -88,7 +96,8 @@ class TransactionsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             tableView.beginUpdates()
-            transactionVM.deleteTransaction(index: indexPath.row)
+            let transactionToDelete = transactionListVM.transactions.value[indexPath.row]
+            transactionListVM.deleteTransaction(transactionToDelete)
             tableView.deleteRows(at: [indexPath], with: .fade)
             tableView.endUpdates()
         }
@@ -100,26 +109,27 @@ class TransactionsViewController: UITableViewController {
 extension TransactionsViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let compoundPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [NSPredicate(format: "merchant CONTAINS[cd] %@", searchBar.text!), NSPredicate(format: "amount CONTAINS[cd] %@", searchBar.text!), NSPredicate(format: "note CONTAINS[cd] %@", searchBar.text!)])
-        transactionVM.loadTransactions(predicates: compoundPredicate)
-        sortSegmentedControl.isEnabled = false
+        getFilteredList(searchBarText: searchBar.text!)
     }
-    
+
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text!.count >= 3 {
+            getFilteredList(searchBarText: searchBar.text!)
+        }
+        
         if searchBar.text?.count == 0 {
-            transactionVM.loadTransactions()
-            
+            transactionListVM.getAllTransactions()
             DispatchQueue.main.async {
                 searchBar.resignFirstResponder()
                 self.sortSegmentedControl.isEnabled = true
             }
         }
-        
-        if searchBar.text!.count >= 3 {
-            let compoundPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [NSPredicate(format: "merchant CONTAINS[cd] %@", searchBar.text!), NSPredicate(format: "amount CONTAINS[cd] %@", searchBar.text!), NSPredicate(format: "note CONTAINS[cd] %@", searchBar.text!)])
-            transactionVM.loadTransactions(predicates: compoundPredicate)
-            sortSegmentedControl.isEnabled = false
-        }
+    }
+    
+    private func getFilteredList(searchBarText: String) {
+        let compoundPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [NSPredicate(format: "merchant CONTAINS[cd] %@", searchBarText), NSPredicate(format: "amount CONTAINS[cd] %@", searchBarText), NSPredicate(format: "note CONTAINS[cd] %@", searchBarText)])
+        transactionListVM.getAllTransactions(predicates: compoundPredicate)
+        sortSegmentedControl.isEnabled = false
     }
     
 }

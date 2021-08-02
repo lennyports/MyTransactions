@@ -5,20 +5,15 @@
 //  Created by Lenny Ports on 7/22/21.
 //
 
-import Foundation
 import UIKit
 
 class TransactionInputViewController: UIViewController {
     
-    var transactionVM: TransactionViewModel?
+    var transactionListVM: TransactionListViewModel?
     var isNewTransaction = true
     var selectedIndex: Int?
-    var merchant: String = ""
     var inputAmount: Int = 0
     var amount: Double = 0.0
-    var date = Date()
-    var note: String = ""
-    var isReturn = false
     
     @IBOutlet weak var merchantTextField: UITextField!
     @IBOutlet weak var amountTextField: UITextField!
@@ -48,21 +43,19 @@ class TransactionInputViewController: UIViewController {
     
     @IBAction func doneButtonTapped(_ sender: UIBarButtonItem) {
         
-        merchant = merchantTextField.text!
-        date = datePicker.date
-        note = notesTextField.text!
-        isReturn = (purchaseReturnSegmentedControl.selectedSegmentIndex == 1)
+        guard isValidInput() else { showAlert(); return }
         
-        guard isValidInput() else {
-            showAlert()
-            return
-            
-        }
+        transactionListVM?.merchant = merchantTextField.text!//merchant
+        transactionListVM?.amount = amount
+        transactionListVM?.date = datePicker.date//date
+        transactionListVM?.note = notesTextField.text!//note
+        transactionListVM?.isReturn = (purchaseReturnSegmentedControl.selectedSegmentIndex == 1)//isReturn
         
         if isNewTransaction {
-            transactionVM?.addTransaction(merchant: merchant, amount: amount, date: date, note: note, isReturn: isReturn)
+            transactionListVM?.addTransaction()
         } else {
-            transactionVM?.updateTransactions(index: selectedIndex!, merchant: merchant, amount: amount, date: date, note: note, isReturn: isReturn)
+            guard let transactionToUpdate = transactionListVM?.transactions.value[selectedIndex!] else { return }
+            transactionListVM?.updateTransaction(transactionToUpdate)
         }
         
         dismiss(animated: true, completion: nil)
@@ -73,11 +66,11 @@ class TransactionInputViewController: UIViewController {
     }
     
     private func loadTransaction() {
-        let transaction = (transactionVM?.transactions.value[selectedIndex!])!
+        let transaction = (transactionListVM?.transactions.value[selectedIndex!])!
         merchantTextField?.text = transaction.merchant
         amountTextField?.text = transaction.amount.toUsDollars
         purchaseReturnSegmentedControl.selectedSegmentIndex = transaction.isReturn ? 1 : 0
-        datePicker?.date = transaction.date!
+        datePicker?.date = transaction.date
         notesTextField?.text = transaction.note
         amount = transaction.amount
     }
