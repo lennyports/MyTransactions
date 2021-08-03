@@ -63,7 +63,7 @@ class TransactionListViewModel: ObservableObject {
         let sort = NSSortDescriptor(key: sortCriteria.rawValue, ascending: isAscending)
         request.sortDescriptors = [sort]
         
-        transactions.value = CoreDataManager.shared.getAllTransactions(with: request).map(TransactionViewModel.init)
+        transactions.value = CoreDataManager.shared.getAllTransactions(with: request).map { TransactionViewModel(transaction: $0) }
     }
     
     func save() {
